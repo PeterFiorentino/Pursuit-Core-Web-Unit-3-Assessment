@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
 router.get("/species/:id", async (req, res) => {
     let id = req.params.id;
     try {
-    let sighting = await db.any(`SELECT * FROM sightings WHERE species_id = ${id}`)
+    let sighting = await db.any(`SELECT * FROM sightings WHERE species_id = $1`, id)
         res.json({
             status: "Success.",
             message: `Retrieved all the sightings of species ${id}`,
@@ -52,7 +52,7 @@ router.get("/researchers/:id", async (req, res) => {
     FROM researchers JOIN sightings ON researchers.id = sightings.researcher_id
                      JOIN species ON species.id = sightings.species_id
                      JOIN habitats ON habitats.id = sightings.habitat_id
-    WHERE researchers.id = ${id}`);
+    WHERE researchers.id = $1`, id);
         res.json({
             status: "Success.",
             message: `Retrieved all the sightings of researcher ${id}`,
@@ -71,7 +71,7 @@ router.get("/researchers/:id", async (req, res) => {
 router.get("/habitats/:id", async (req, res) => {
     let id = req.params.id;
     try {
-    let sighting = await db.any(`SELECT * FROM sightings WHERE habitat_id = ${id}`)
+    let sighting = await db.any(`SELECT * FROM sightings WHERE habitat_id = $1`, id)
         res.json({
             status: "Success.",
             message: `Retrieved all the sightings in ${id}`,
@@ -113,7 +113,7 @@ router.post("/", async (req, res) => {
 router.delete("/:id", async (req, res) => {
     let id = req.params.id;
     try {
-        let sighting = await db.none(`DELETE FROM sightings WHERE id = ${id}`)
+        let sighting = await db.one(`DELETE FROM sightings WHERE id = $1 RETURNING *`, id)
         res.json({
             status: "Success.",
             message: `Deleted sighting ${id}`

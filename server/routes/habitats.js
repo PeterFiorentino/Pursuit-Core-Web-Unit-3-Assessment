@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
 router.get("/:id", async (req, res) => {
     let id = req.params.id;
     try {
-        let habitat = await db.one(`SELECT * FROM habitats WHERE id = ${id}`)
+        let habitat = await db.one(`SELECT * FROM habitats WHERE id = $1`, id)
         res.json({
             status: "Success.",
             message: `Retrieved the habitat with the ID ${id}`,

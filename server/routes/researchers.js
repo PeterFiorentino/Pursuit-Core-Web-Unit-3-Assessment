@@ -26,7 +26,7 @@ router.get('/',  async (req, res) => {
 router.get('/:id', async (req, res) => {
     let id = req.params.id;
     try {
-        let researcher = await db.one(`SELECT * FROM researchers WHERE id = ${id}`)
+        let researcher = await db.one(`SELECT * FROM researchers WHERE id = $1`, id)
         res.json({
             status: "Success.",
             message: `Received the researcher with the ID ${id}.`,
@@ -106,14 +106,15 @@ router.patch('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     let id = req.params.id
     try {
-        let deletedUser = await db.none(`DELETE FROM researchers WHERE id = ${id}`)
+        let deletedUser = await db.one(`DELETE FROM researchers WHERE id = $1 RETURNING *`, id)
         res.json({
             status: "Success.",
             message: `Researcher ${id} was deleted.`,
         })
     } catch (error) {
         console.log(error)
-        res.json({
+
+        res.status(404).json({
             status: "Error.",
             message: "Could not delete researcher."
         })
